@@ -1,0 +1,17 @@
+{
+  "name": "att-wireless-prototype",
+  "version": "1.0.0",
+  "description": "AT&T Wireless Plan Builder Prototype",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000 --open",
+    "dev": "live-server --port=3000 --open",
+    "serve": "live-server --port=3000 --open"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "keywords": ["att", "wireless", "prototype", "html", "css"],
+  "author": "",
+  "license": "ISC"
+}
