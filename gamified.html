@@ -24,8 +24,7 @@
                         'bounce-slow': 'bounce 2s infinite',
                         'pulse-slow': 'pulse 3s infinite',
                         'float': 'float 3s ease-in-out infinite',
-                        'slide-in': 'slideIn 0.5s ease-out',
-                        'glow': 'glow 2s ease-in-out infinite alternate'
+                        'slide-in': 'slideIn 0.5s ease-out'
                     },
                     keyframes: {
                         float: {
@@ -35,10 +34,6 @@
                         slideIn: {
                             '0%': { transform: 'translateX(-100%)', opacity: '0' },
                             '100%': { transform: 'translateX(0)', opacity: '1' }
-                        },
-                        glow: {
-                            '0%': { boxShadow: '0 0 5px #06b6d4, 0 0 10px #06b6d4, 0 0 15px #06b6d4' },
-                            '100%': { boxShadow: '0 0 10px #06b6d4, 0 0 20px #06b6d4, 0 0 30px #06b6d4' }
                         }
                     }
                 }
@@ -68,45 +63,56 @@
         .custom-slider {
             -webkit-appearance: none;
             appearance: none;
-            background: linear-gradient(to right, #e5e7eb 0%, #e5e7eb 100%);
+            width: 100%;
             height: 8px;
             border-radius: 4px;
-            cursor: pointer;
+            background: linear-gradient(to right, #e2e8f0 0%, #e2e8f0 100%);
             outline: none;
+            cursor: pointer;
+            position: relative;
         }
-        .custom-slider::-webkit-slider-track {
-            -webkit-appearance: none;
-            appearance: none;
-            background: linear-gradient(to right, #0073e7 0%, #005bb5 100%);
-            height: 8px;
-            border-radius: 4px;
-        }
+        
         .custom-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            height: 24px;
-            width: 24px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #0073e7, #005bb5);
+            background: #0073e7;
             cursor: pointer;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            margin-top: -8px;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0, 115, 231, 0.3);
+            transition: all 0.2s ease;
         }
+        
+        .custom-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 115, 231, 0.5);
+        }
+        
+        .custom-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #0073e7;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0, 115, 231, 0.3);
+            transition: all 0.2s ease;
+        }
+        
         .custom-slider::-moz-range-track {
-            background: linear-gradient(to right, #0073e7 0%, #005bb5 100%);
+            width: 100%;
             height: 8px;
+            cursor: pointer;
+            background: #e2e8f0;
             border-radius: 4px;
             border: none;
         }
-        .custom-slider::-moz-range-thumb {
-            height: 24px;
-            width: 24px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #0073e7, #005bb5);
-            cursor: pointer;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        
+        /* Progress fill effect */
+        .custom-slider {
+            background: linear-gradient(to right, #0073e7 0%, #0073e7 var(--value, 0%), #e2e8f0 var(--value, 0%), #e2e8f0 100%);
         }
         .plan-card-hover:hover {
             transform: translateY(-8px) scale(1.02);
@@ -181,6 +187,48 @@
         <div class="grid lg:grid-cols-3 gap-8">
             <!-- Left Column - Interactive Controls -->
             <div class="lg:col-span-2 space-y-8">
+                <!-- Number of Lines Selection -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 plan-card-hover transition-all duration-300">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-r from-att-blue to-att-blue-dark rounded-xl flex items-center justify-center">
+                            <span class="text-2xl">📱</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">How Many Lines?</h3>
+                            <p class="text-gray-600">Select the number of phone lines you need</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-gray-600">Number of Lines</span>
+                            <div class="text-3xl font-bold gradient-text" id="linesDisplay">1</div>
+                        </div>
+                        <input type="range" id="linesSlider" min="1" max="6" value="1" 
+                               class="w-full custom-slider">
+                        <div class="flex justify-between text-sm text-gray-500 mt-2">
+                            <span>1 Line</span>
+                            <span>3 Lines</span>
+                            <span>6+ Lines</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <button class="lines-preset p-3 rounded-lg border border-gray-300 hover:border-att-blue hover:bg-att-blue hover:bg-opacity-10 hover:text-att-blue transition-all" data-lines="1">
+                            <div class="font-semibold">Individual</div>
+                            <div class="text-sm text-gray-500">1 Line</div>
+                        </button>
+                        <button class="lines-preset p-3 rounded-lg border border-gray-300 hover:border-att-blue hover:bg-att-blue hover:bg-opacity-10 hover:text-att-blue transition-all" data-lines="2">
+                            <div class="font-semibold">Couple</div>
+                            <div class="text-sm text-gray-500">2 Lines</div>
+                        </button>
+                        <button class="lines-preset p-3 rounded-lg border border-gray-300 hover:border-att-blue hover:bg-att-blue hover:bg-opacity-10 hover:text-att-blue transition-all" data-lines="4">
+                            <div class="font-semibold">Family</div>
+                            <div class="text-sm text-gray-500">4 Lines</div>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Budget First Approach -->
                 <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 plan-card-hover transition-all duration-300">
                     <div class="flex items-center gap-3 mb-6">
@@ -256,10 +304,10 @@
                         <!-- Call Minutes -->
                         <div>
                             <div class="flex items-center justify-between mb-3">
-                                <span class="font-semibold flex items-center gap-2">
-                                    <span class="text-gaming-green">📞</span> Call Minutes
+                                <span class="font-semibold flex items-center gap-2 text-gray-900">
+                                    <span class="text-att-blue">📞</span> Call Minutes
                                 </span>
-                                <div class="text-lg font-bold" id="callDisplay">500 min</div>
+                                <div class="text-lg font-bold text-att-blue" id="callDisplay">500 min</div>
                             </div>
                             <input type="range" id="callSlider" min="100" max="2000" value="500" step="100"
                                    class="w-full custom-slider">
@@ -273,16 +321,16 @@
                         <!-- Text Messages -->
                         <div>
                             <div class="flex items-center justify-between mb-3">
-                                <span class="font-semibold flex items-center gap-2">
-                                    <span class="text-gaming-pink">💬</span> Text Messages
+                                <span class="font-semibold flex items-center gap-2 text-gray-900">
+                                    <span class="text-att-blue">💬</span> Text Messages
                                 </span>
-                                <div class="text-lg font-bold" id="textDisplay">Unlimited</div>
+                                <div class="text-lg font-bold text-att-blue" id="textDisplay">Unlimited</div>
                             </div>
                             <div class="flex gap-3">
-                                <button class="text-option flex-1 p-3 rounded-lg border border-gray-600 hover:border-gaming-pink transition-all" data-text="1000">
+                                <button class="text-option flex-1 p-3 rounded-lg border border-gray-300 hover:border-att-blue hover:bg-att-blue hover:bg-opacity-10 transition-all" data-text="1000">
                                     1000/mo
                                 </button>
-                                <button class="text-option flex-1 p-3 rounded-lg border border-gaming-pink bg-gaming-pink bg-opacity-20 transition-all" data-text="unlimited">
+                                <button class="text-option flex-1 p-3 rounded-lg border border-att-blue bg-att-blue bg-opacity-20 transition-all" data-text="unlimited">
                                     Unlimited
                                 </button>
                             </div>
@@ -291,33 +339,33 @@
                 </div>
 
                 <!-- Quick Setup Quiz -->
-                <div class="glass-effect rounded-2xl p-8 plan-card-hover transition-all duration-300">
+                <div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 plan-card-hover transition-all duration-300">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-r from-gaming-cyan to-gaming-purple rounded-xl flex items-center justify-center">
+                        <div class="w-12 h-12 bg-gradient-to-r from-att-blue to-att-blue-dark rounded-xl flex items-center justify-center">
                             <span class="text-2xl">🎯</span>
                         </div>
                         <div>
-                            <h3 class="text-2xl font-bold">Quick Setup Assistant</h3>
-                            <p class="text-gray-300">Answer a few questions for instant recommendations</p>
+                            <h3 class="text-2xl font-bold text-gray-900">Quick Setup Assistant</h3>
+                            <p class="text-gray-600">Answer a few questions for instant recommendations</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <button class="quiz-option p-4 rounded-lg border border-gray-600 hover:border-gaming-cyan hover:bg-gaming-cyan hover:bg-opacity-20 transition-all text-left" data-type="student">
+                        <button class="quiz-option p-4 rounded-lg border border-gray-300 hover:border-att-blue hover:bg-att-blue hover:bg-opacity-10 hover:text-att-blue transition-all text-left" data-type="student">
                             <div class="font-semibold mb-1">📚 Student</div>
-                            <div class="text-sm text-gray-400">Light usage, budget-friendly</div>
+                            <div class="text-sm text-gray-500">Light usage, budget-friendly</div>
                         </button>
-                        <button class="quiz-option p-4 rounded-lg border border-gray-600 hover:border-gaming-green hover:bg-gaming-green hover:bg-opacity-20 transition-all text-left" data-type="professional">
+                        <button class="quiz-option p-4 rounded-lg border border-gray-300 hover:border-att-blue hover:bg-att-blue hover:bg-opacity-10 hover:text-att-blue transition-all text-left" data-type="professional">
                             <div class="font-semibold mb-1">💼 Professional</div>
-                            <div class="text-sm text-gray-400">Reliable coverage, moderate data</div>
+                            <div class="text-sm text-gray-500">Reliable coverage, moderate data</div>
                         </button>
-                        <button class="quiz-option p-4 rounded-lg border border-gray-600 hover:border-gaming-pink hover:bg-gaming-pink hover:bg-opacity-20 transition-all text-left" data-type="family">
+                        <button class="quiz-option p-4 rounded-lg border border-gray-300 hover:border-att-blue hover:bg-att-blue hover:bg-opacity-10 hover:text-att-blue transition-all text-left" data-type="family">
                             <div class="font-semibold mb-1">👨‍👩‍👧‍👦 Family</div>
-                            <div class="text-sm text-gray-400">Multiple lines, shared data</div>
+                            <div class="text-sm text-gray-500">Multiple lines, shared data</div>
                         </button>
-                        <button class="quiz-option p-4 rounded-lg border border-gray-600 hover:border-gaming-purple hover:bg-gaming-purple hover:bg-opacity-20 transition-all text-left" data-type="power">
+                        <button class="quiz-option p-4 rounded-lg border border-gray-300 hover:border-att-blue hover:bg-att-blue hover:bg-opacity-10 hover:text-att-blue transition-all text-left" data-type="power">
                             <div class="font-semibold mb-1">⚡ Power User</div>
-                            <div class="text-sm text-gray-400">Unlimited everything, premium features</div>
+                            <div class="text-sm text-gray-500">Unlimited everything, premium features</div>
                         </button>
                     </div>
                 </div>
@@ -326,19 +374,19 @@
             <!-- Right Column - Live Recommendations -->
             <div class="space-y-6">
                 <!-- AI Recommendation Card -->
-                <div class="glass-effect rounded-2xl p-6 sticky top-6 animate-glow">
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 sticky top-6">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-r from-gaming-green to-gaming-cyan rounded-lg flex items-center justify-center animate-pulse">
+                        <div class="w-10 h-10 bg-gradient-to-r from-att-blue to-att-blue-dark rounded-lg flex items-center justify-center">
                             <span class="text-lg">🤖</span>
                         </div>
                         <div>
-                            <h3 class="font-bold">AI Recommendation</h3>
-                            <p class="text-sm text-gray-400">Based on your preferences</p>
+                            <h3 class="font-bold text-gray-900">AI Recommendation</h3>
+                            <p class="text-sm text-gray-600">Based on your preferences</p>
                         </div>
                     </div>
 
                     <div id="recommendationCard" class="space-y-4">
-                        <div class="bg-gradient-to-r from-gaming-purple to-gaming-pink rounded-xl p-4">
+                        <div class="bg-gradient-to-r from-att-blue to-att-blue-dark rounded-xl p-4 text-white">
                             <div class="flex justify-between items-start mb-2">
                                 <div>
                                     <h4 class="font-bold text-lg">AT&T Unlimited Extra</h4>
@@ -351,68 +399,68 @@
                             </div>
                             <div class="space-y-2 text-sm">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gaming-cyan">✓</span>
+                                    <span class="text-white">✓</span>
                                     <span>75GB high-speed data</span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gaming-cyan">✓</span>
+                                    <span class="text-white">✓</span>
                                     <span>Unlimited talk & text</span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gaming-cyan">✓</span>
+                                    <span class="text-white">✓</span>
                                     <span>30GB hotspot data</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="text-center">
-                            <div class="text-sm text-gray-400 mb-2">Match Score</div>
+                            <div class="text-sm text-gray-600 mb-2">Match Score</div>
                             <div class="flex items-center justify-center gap-1">
-                                <span class="text-gaming-green text-2xl">●</span>
-                                <span class="text-gaming-green text-2xl">●</span>
-                                <span class="text-gaming-green text-2xl">●</span>
-                                <span class="text-gaming-green text-2xl">●</span>
-                                <span class="text-gray-500 text-2xl">●</span>
+                                <span class="text-att-blue text-2xl">●</span>
+                                <span class="text-att-blue text-2xl">●</span>
+                                <span class="text-att-blue text-2xl">●</span>
+                                <span class="text-att-blue text-2xl">●</span>
+                                <span class="text-gray-400 text-2xl">●</span>
                             </div>
-                            <div class="text-sm text-gaming-green font-semibold">85% Match</div>
+                            <div class="text-sm text-att-blue font-semibold">85% Match</div>
                         </div>
 
-                        <button class="w-full bg-gradient-to-r from-gaming-green to-gaming-cyan py-3 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                        <button class="w-full bg-gradient-to-r from-att-blue to-att-blue-dark py-3 rounded-lg font-semibold text-white hover:shadow-lg transform hover:scale-105 transition-all duration-300">
                             Select This Plan
                         </button>
                     </div>
                 </div>
 
                 <!-- Alternative Plans -->
-                <div class="glass-effect rounded-2xl p-6">
-                    <h3 class="font-bold mb-4 flex items-center gap-2">
-                        <span class="text-gaming-pink">⚡</span>
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+                    <h3 class="font-bold mb-4 flex items-center gap-2 text-gray-900">
+                        <span class="text-att-orange">⚡</span>
                         Alternative Options
                     </h3>
                     
                     <div class="space-y-3">
-                        <div class="alternative-plan p-3 rounded-lg border border-gray-600 hover:border-gaming-cyan cursor-pointer transition-all">
+                        <div class="alternative-plan p-3 rounded-lg border border-gray-300 hover:border-att-blue cursor-pointer transition-all">
                             <div class="flex justify-between items-center">
                                 <div>
-                                    <div class="font-semibold">Unlimited Premium</div>
-                                    <div class="text-sm text-gray-400">More features</div>
+                                    <div class="font-semibold text-gray-900">Unlimited Premium</div>
+                                    <div class="text-sm text-gray-600">More features</div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="font-bold">$85</div>
-                                    <div class="text-xs text-gray-400">65% match</div>
+                                    <div class="font-bold text-gray-900">$85</div>
+                                    <div class="text-xs text-gray-500">65% match</div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="alternative-plan p-3 rounded-lg border border-gray-600 hover:border-gaming-green cursor-pointer transition-all">
+                        <div class="alternative-plan p-3 rounded-lg border border-gray-300 hover:border-att-blue cursor-pointer transition-all">
                             <div class="flex justify-between items-center">
                                 <div>
-                                    <div class="font-semibold">Unlimited Starter</div>
-                                    <div class="text-sm text-gray-400">Budget option</div>
+                                    <div class="font-semibold text-gray-900">Unlimited Starter</div>
+                                    <div class="text-sm text-gray-600">Budget option</div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="font-bold">$60</div>
-                                    <div class="text-xs text-gray-400">70% match</div>
+                                    <div class="font-bold text-gray-900">$60</div>
+                                    <div class="text-xs text-gray-500">70% match</div>
                                 </div>
                             </div>
                         </div>
@@ -420,26 +468,62 @@
                 </div>
 
                 <!-- Savings Tracker -->
-                <div class="glass-effect rounded-2xl p-6">
-                    <h3 class="font-bold mb-4 flex items-center gap-2">
-                        <span class="text-gaming-green">💰</span>
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+                    <h3 class="font-bold mb-4 flex items-center gap-2 text-gray-900">
+                        <span class="text-att-blue">💰</span>
                         Potential Savings
                     </h3>
                     
                     <div class="text-center">
-                        <div class="text-3xl font-bold text-gaming-green mb-2">$240</div>
-                        <div class="text-sm text-gray-400 mb-4">saved per year vs competitors</div>
+                        <div class="text-3xl font-bold text-att-blue mb-2">$240</div>
+                        <div class="text-sm text-gray-600 mb-4">saved per year vs competitors</div>
                         
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between">
-                                <span>vs Verizon</span>
-                                <span class="text-gaming-green">-$20/mo</span>
+                                <span class="text-gray-700">vs Verizon</span>
+                                <span class="text-att-blue font-semibold">-$20/mo</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>vs T-Mobile</span>
-                                <span class="text-gaming-green">-$15/mo</span>
+                                <span class="text-gray-700">vs T-Mobile</span>
+                                <span class="text-att-blue font-semibold">-$15/mo</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line Configurator Section -->
+        <div id="lineConfiguratorSection" class="max-w-7xl mx-auto px-6 py-12" style="display: none;">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-att-blue to-att-blue-dark rounded-xl flex items-center justify-center">
+                        <span class="text-2xl">⚙️</span>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Configure Your Lines</h2>
+                        <p class="text-gray-600">Set up each line with your preferred device and plan options</p>
+                    </div>
+                </div>
+                
+                <!-- Dynamic Line Configurations Container -->
+                <div id="lineConfigurationsContainer" class="space-y-6">
+                    <!-- Lines will be generated here dynamically -->
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="mt-8 p-6 bg-att-light-gray rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                    <div class="flex flex-wrap gap-3">
+                        <button class="quick-action-btn bg-white border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-att-blue hover:text-white hover:border-att-blue transition-colors" data-action="copy-line-1">
+                            Copy Line 1 Settings
+                        </button>
+                        <button class="quick-action-btn bg-white border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-att-blue hover:text-white hover:border-att-blue transition-colors" data-action="all-byod">
+                            Make All Lines BYOD
+                        </button>
+                        <button class="quick-action-btn bg-white border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:bg-att-blue hover:text-white hover:border-att-blue transition-colors" data-action="same-plan">
+                            Apply Same Plan to All
+                        </button>
                     </div>
                 </div>
             </div>
