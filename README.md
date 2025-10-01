@@ -38,15 +38,47 @@ Visit the live prototype: [https://yourusername.github.io/ATT-Buy-Flow-Redesign]
 
 ## 🚀 Getting Started
 
+### Basic Setup
 1. Clone this repository
 2. Open `index.html` in your browser
 3. Start selecting plans and configuring lines!
 
+### AI Assistant Setup (for intelligent.html)
+1. Copy `local.env.example` to `local.env`
+2. Add your Groq API key to `local.env`:
+   ```
+   GROQ_API_KEY=your_actual_groq_api_key_here
+   ```
+3. Start a local server (required for environment file loading):
+   ```bash
+   python3 -m http.server 8000
+   ```
+4. Visit `http://localhost:8000/intelligent.html`
+
+### Environment Variables
+The AI-powered features require a Groq API key. Create a `local.env` file with:
+- `GROQ_API_KEY`: Your Groq API key for AI functionality
+- `GROQ_ENDPOINT`: API endpoint (defaults to Groq's OpenAI-compatible endpoint)
+
 ## 📄 Files
 
+### Core Application
 - `index.html` - Main application structure
-- `script.js` - Interactive functionality
+- `script.js` - Interactive functionality  
 - `styles.css` - Additional custom styles (using Tailwind CDN)
+- `gamified.html` - Gamified plan selection experience
+- `gamified.js` - Gamified functionality
+
+### AI-Powered Experience
+- `intelligent.html` - AI assistant interface
+- `intelligent.js` - AI conversation and cart logic
+- `env-loader.js` - Environment variable loader
+- `local.env` - Environment configuration (not in git)
+- `local.env.example` - Example environment file
+
+### Configuration
+- `.gitignore` - Git ignore rules (includes local.env)
+- `README.md` - This documentation
 
 ---
 

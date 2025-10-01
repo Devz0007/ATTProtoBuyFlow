@@ -1,9 +1,8 @@
 class IntelligentCart {
     constructor() {
-        // Initialize configuration
-        this.config = new Config();
-        this.groqApiKey = this.config.groqApiKey;
-        this.groqEndpoint = this.config.groqEndpoint;
+        this.groqApiKey = null;
+        this.groqEndpoint = null;
+        this.envLoader = new EnvLoader();
         
         this.conversationHistory = [];
         this.userProfile = {
@@ -92,18 +91,23 @@ class IntelligentCart {
     }
     
     async init() {
-        this.bindEvents();
-        this.setupSystemPrompt();
-        
-        // Check API key configuration
-        const apiKeyConfigured = await this.config.promptForApiKey();
-        if (!apiKeyConfigured) {
-            this.addMessageToChat("⚠️ Groq API key is required for AI functionality. Please refresh the page and enter your API key.", 'ai');
-            return;
+        try {
+            // Load environment variables
+            await this.envLoader.loadEnv();
+            this.groqApiKey = this.envLoader.getRequired('GROQ_API_KEY');
+            this.groqEndpoint = this.envLoader.get('GROQ_ENDPOINT', 'https://api.groq.com/openai/v1/chat/completions');
+            
+            this.bindEvents();
+            this.setupSystemPrompt();
+            
+            console.log('✅ Intelligent Cart initialized successfully with API key');
+        } catch (error) {
+            console.error('❌ Failed to initialize Intelligent Cart:', error.message);
+            this.addMessageToChat(
+                "⚠️ Unable to load API configuration. Please make sure the local.env file exists with your GROQ_API_KEY. Check the console for details.", 
+                'ai'
+            );
         }
-        
-        // Update API key if it was changed
-        this.groqApiKey = this.config.groqApiKey;
     }
     
     bindEvents() {
@@ -320,6 +324,11 @@ INTELLIGENCE INDICATORS:
     }
     
     async getAIResponse(userMessage) {
+        // Check if API key is loaded
+        if (!this.groqApiKey) {
+            throw new Error('API key not loaded. Please check your local.env file.');
+        }
+        
         // Build context-aware system prompt
         const contextualPrompt = this.buildContextualPrompt();
         
