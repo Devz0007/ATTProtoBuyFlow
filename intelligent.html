@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AT&T Intelligent Cart - AI-Powered Plan Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'att-blue': '#0073e7',
+                        'att-blue-dark': '#005bb5',
+                        'att-blue-light': '#e6f3ff',
+                        'att-orange': '#ff6900',
+                        'att-gray': '#5a5a5a',
+                        'att-light-gray': '#f5f5f5'
+                    },
+                    fontFamily: {
+                        'att': ['Omnes', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'slide-in': 'slideIn 0.5s ease-out',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'typing': 'typing 1s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        slideIn: {
+                            '0%': { transform: 'translateX(-100%)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        typing: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.5' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #0073e7, #005bb5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .chat-bubble-user {
+            background: linear-gradient(135deg, #374151, #1f2937);
+            color: white;
+            border-radius: 16px 16px 4px 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chat-bubble-ai {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px 16px 16px 4px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .typing-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #94a3b8;
+            animation: typing 1.4s ease-in-out infinite;
+        }
+        
+        .typing-indicator:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        .cart-item-enter {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .suggestion-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .suggestion-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 115, 231, 0.2);
+        }
+    </style>
+</head>
+    <body class="bg-gray-50 min-h-screen text-gray-900 font-att">
+
+    <!-- Header -->
+    <header class="relative z-10 p-6 bg-white shadow-sm">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <a href="index.html" class="text-att-blue hover:text-att-blue-dark transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                    </a>
+                    <span class="text-gray-400">|</span>
+                    <a href="gamified.html" class="text-att-blue hover:text-att-blue-dark transition-colors text-sm">
+                        Gamified
+                    </a>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-att-blue rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">AT&T</span>
+                    </div>
+                    <h1 class="text-2xl font-bold gradient-text">Intelligent Cart</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 bg-att-light-gray px-3 py-1 rounded-full">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-sm text-gray-600">AI Assistant Active</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <div class="grid lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column - Conversation Area -->
+            <div class="lg:col-span-2">
+                <!-- Welcome Section -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold mb-4">
+                            Meet <span class="gradient-text">Alex</span>, Your AT&T Assistant
+                        </h2>
+                        <p class="text-xl text-gray-600 mb-6">
+                            I'll help you find the perfect wireless plan through natural conversation. Just tell me what you need!
+                        </p>
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <button class="suggestion-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors border border-gray-200" data-suggestion="I need a family plan for 4 people">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                                Family Plan
+                            </button>
+                            <button class="suggestion-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors border border-gray-200" data-suggestion="I'm switching from Verizon and paying $200/month">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                </svg>
+                                Switch & Save
+                            </button>
+                            <button class="suggestion-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors border border-gray-200" data-suggestion="I'm a teacher looking for discounts">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                                Teacher Discount
+                            </button>
+                            <button class="suggestion-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors border border-gray-200" data-suggestion="I need a new iPhone with my plan">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a1 1 0 001-1V4a1 1 0 00-1-1H8a1 1 0 00-1 1v16a1 1 0 001 1z"/>
+                                </svg>
+                                Phone + Plan
+                            </button>
+                            <button class="suggestion-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors border border-gray-200" data-suggestion="I'm military, what discounts do you have?">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                                Military Discount
+                            </button>
+                            <button class="suggestion-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors border border-gray-200" data-suggestion="I work for a large company">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                                Corporate Discount
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Interface -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+                    <!-- Chat Header -->
+                    <div class="bg-gradient-to-r from-att-blue to-att-blue-dark p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <span class="text-lg">🤖</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-white">Alex - AT&T Assistant</h3>
+                                <p class="text-sm text-white opacity-90" id="aiStatus">Ready to help you find the perfect plan</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages -->
+                    <div id="chatMessages" class="h-[500px] overflow-y-auto p-4 space-y-4">
+                        <div class="flex items-start gap-3 animate-fade-in">
+                            <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div class="chat-bubble-ai p-4 max-w-lg">
+                                <div class="text-gray-800 leading-relaxed">
+                                    <p class="mb-3">Hey there! Welcome to AT&T! I'm Alex, and I'm super excited to help you out today.</p>
+                                    
+                                    <div class="bg-att-blue-light rounded-lg p-3 mb-3">
+                                        <h4 class="font-semibold text-att-blue mb-2">🎯 How can I help you today?</h4>
+                                        <ul class="space-y-1">
+                                            <li class="flex items-center gap-2">
+                                                <span class="w-1.5 h-1.5 bg-att-blue rounded-full flex-shrink-0"></span>
+                                                <span class="text-sm">Switch from another carrier</span>
+                                            </li>
+                                            <li class="flex items-center gap-2">
+                                                <span class="w-1.5 h-1.5 bg-att-blue rounded-full flex-shrink-0"></span>
+                                                <span class="text-sm">Add new lines to your family</span>
+                                            </li>
+                                            <li class="flex items-center gap-2">
+                                                <span class="w-1.5 h-1.5 bg-att-blue rounded-full flex-shrink-0"></span>
+                                                <span class="text-sm">Upgrade your current plan</span>
+                                            </li>
+                                            <li class="flex items-center gap-2">
+                                                <span class="w-1.5 h-1.5 bg-att-blue rounded-full flex-shrink-0"></span>
+                                                <span class="text-sm">Get a new device</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="bg-green-50 rounded-lg p-3 border-l-4 border-green-400">
+                                        <p class="text-sm text-green-800"><span class="font-semibold">💡 Alex's Promise:</span> I love helping people save money and get exactly what they need!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="border-t border-gray-200 p-4">
+                        <div class="flex gap-3">
+                            <input 
+                                type="text" 
+                                id="chatInput" 
+                                placeholder="Type your message or question..."
+                                class="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-att-blue focus:border-transparent"
+                                maxlength="500"
+                            >
+                            <button 
+                                id="sendButton" 
+                                class="bg-att-blue text-white px-6 py-3 rounded-full hover:bg-att-blue-dark transition-colors flex items-center gap-2"
+                            >
+                                <span>Send</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-500 text-center">
+                            Press Enter to send • Powered by AI
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Dynamic Cart -->
+            <div class="space-y-6">
+                <!-- Cart Header -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5M7 13v6a2 2 0 002 2h6M9 19v2m6-2v2"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Your Cart</h3>
+                                <p class="text-sm text-gray-500">Built by AI recommendations</p>
+                            </div>
+                        </div>
+                        <div class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium" id="cartCount">0 items</div>
+                    </div>
+
+                    <!-- Pending Items (waiting for confirmation) -->
+                    <div id="pendingItems" class="hidden mb-4">
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                            <div class="flex items-center gap-2 mb-2">
+                                <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                </svg>
+                                <h4 class="font-medium text-yellow-800">Waiting for Confirmation</h4>
+                            </div>
+                            <div id="pendingItemsList" class="space-y-2">
+                                <!-- Pending items will be added here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cart Items Container -->
+                    <div id="cartItems" class="space-y-4">
+                        <!-- Empty State -->
+                        <div id="emptyCart" class="text-center py-12 text-gray-500">
+                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                            </div>
+                            <p class="font-medium text-gray-600">Your cart is empty</p>
+                            <p class="text-sm text-gray-500 mt-1">Chat with Alex to build your cart</p>
+                        </div>
+                    </div>
+
+                    <!-- Cart Total -->
+                    <div id="cartTotal" class="hidden border-t border-gray-200 pt-6 mt-6">
+                        <div class="space-y-3 mb-4">
+                            <div class="flex justify-between text-sm text-gray-600">
+                                <span>Monthly Subtotal</span>
+                                <span id="subtotal" class="font-medium">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-600">
+                                <span>Est. taxes & fees</span>
+                                <span id="taxes" class="font-medium">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-green-600 hidden" id="cartDiscountRow">
+                                <span>Discounts</span>
+                                <span id="cartDiscount" class="font-medium">-$0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center font-bold text-lg border-t border-gray-200 pt-4 mb-6">
+                            <span class="text-gray-900">Monthly Total</span>
+                            <span id="total" class="text-2xl text-att-blue">$0.00</span>
+                        </div>
+                        
+                        <button id="checkoutButton" class="w-full bg-gray-900 text-white py-4 px-6 rounded-xl font-semibold hover:bg-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl">
+                            Continue to Checkout
+                        </button>
+                        
+                        <p class="text-xs text-gray-500 text-center mt-3">
+                            Final pricing may vary based on location and promotions
+                        </p>
+                    </div>
+                </div>
+
+                <!-- AI Insights -->
+                <div id="aiInsights" class="bg-blue-50 rounded-2xl shadow-lg border border-blue-200 p-6 hidden">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-gray-900">AI Insights</h4>
+                    </div>
+                    <div id="insightsContent" class="text-sm text-gray-700">
+                        <!-- Dynamic insights will appear here -->
+                    </div>
+                </div>
+
+                <!-- Savings Tracker -->
+                <div id="savingsTracker" class="bg-green-50 border border-green-200 rounded-2xl p-6 hidden">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-green-800">You're Saving!</h4>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600 mb-2" id="savingsAmount">$0</div>
+                        <div class="text-sm text-green-700" id="savingsDescription">per month with current discounts</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <h4 class="font-semibold text-gray-900 mb-4">Quick Actions</h4>
+                    <div class="space-y-2">
+                        <button class="quick-action w-full text-left px-3 py-2 rounded-lg hover:bg-att-light-gray transition-colors text-sm" data-action="compare-plans">
+                            📊 Compare Plans
+                        </button>
+                        <button class="quick-action w-full text-left px-3 py-2 rounded-lg hover:bg-att-light-gray transition-colors text-sm" data-action="check-coverage">
+                            📡 Check Coverage
+                        </button>
+                        <button class="quick-action w-full text-left px-3 py-2 rounded-lg hover:bg-att-light-gray transition-colors text-sm" data-action="trade-in-value">
+                            📱 Trade-in Value
+                        </button>
+                        <button class="quick-action w-full text-left px-3 py-2 rounded-lg hover:bg-att-light-gray transition-colors text-sm" data-action="help">
+                            ❓ Get Help
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="intelligent.js"></script>
+</body>
+</html>
