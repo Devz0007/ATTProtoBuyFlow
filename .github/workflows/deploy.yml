@@ -23,9 +23,9 @@ jobs:
       
       - name: Create env file from secrets
         run: |
-          echo "# Groq AI API Configuration" > local.env
-          echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> local.env
-          echo "GROQ_ENDPOINT=https://api.groq.com/openai/v1/chat/completions" >> local.env
+          echo "# OpenRouter AI API Configuration" > local.env
+          echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> local.env
+          echo "OPENROUTER_ENDPOINT=https://openrouter.ai/api/v1/chat/completions" >> local.env
       
       - name: Setup Pages
         uses: actions/configure-pages@v4

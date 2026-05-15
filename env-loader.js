@@ -9,7 +9,7 @@ class EnvLoader {
         if (this.loaded) return this.env;
         
         try {
-            const response = await fetch('./local.env');
+            const response = await fetch('./local.env?nocache=' + Date.now());
             if (!response.ok) {
                 throw new Error(`Failed to load environment file: ${response.status}`);
             }
@@ -20,7 +20,7 @@ class EnvLoader {
             return this.env;
         } catch (error) {
             console.warn('Could not load local.env file:', error.message);
-            console.warn('Make sure local.env exists and contains GROQ_API_KEY');
+            console.warn('Make sure local.env exists and contains OPENROUTER_API_KEY');
             return {};
         }
     }

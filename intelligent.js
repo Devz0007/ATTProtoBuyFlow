@@ -1,7 +1,7 @@
 class IntelligentCart {
     constructor() {
-        this.groqApiKey = null;
-        this.groqEndpoint = null;
+        this.openRouterApiKey = null;
+        this.openRouterEndpoint = null;
         this.envLoader = new EnvLoader();
         
         this.conversationHistory = [];
@@ -94,8 +94,8 @@ class IntelligentCart {
         try {
             // Load environment variables
             await this.envLoader.loadEnv();
-            this.groqApiKey = this.envLoader.getRequired('GROQ_API_KEY');
-            this.groqEndpoint = this.envLoader.get('GROQ_ENDPOINT', 'https://api.groq.com/openai/v1/chat/completions');
+            this.openRouterApiKey = this.envLoader.getRequired('OPENROUTER_API_KEY');
+            this.openRouterEndpoint = this.envLoader.get('OPENROUTER_ENDPOINT', 'https://openrouter.ai/api/v1/chat/completions');
             
             this.bindEvents();
             this.setupSystemPrompt();
@@ -104,7 +104,7 @@ class IntelligentCart {
         } catch (error) {
             console.error('❌ Failed to initialize Intelligent Cart:', error.message);
             this.addMessageToChat(
-                "⚠️ Unable to load API configuration. Please make sure the local.env file exists with your GROQ_API_KEY. Check the console for details.", 
+                "⚠️ Unable to load API configuration. Please make sure the local.env file exists with your OPENROUTER_API_KEY. Check the console for details.", 
                 'ai'
             );
         }
@@ -325,7 +325,7 @@ INTELLIGENCE INDICATORS:
     
     async getAIResponse(userMessage) {
         // Check if API key is loaded
-        if (!this.groqApiKey) {
+        if (!this.openRouterApiKey) {
             throw new Error('API key not loaded. Please check your local.env file.');
         }
         
@@ -337,14 +337,16 @@ INTELLIGENCE INDICATORS:
             ...this.conversationHistory.slice(-8) // Keep last 8 messages for context
         ];
         
-        const response = await fetch(this.groqEndpoint, {
+        const response = await fetch(this.openRouterEndpoint, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${this.groqApiKey}`,
-                'Content-Type': 'application/json'
+                'Authorization': `Bearer ${this.openRouterApiKey}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': window.location.origin,
+                'X-Title': 'AT&T Prototype Buy Flow'
             },
             body: JSON.stringify({
-                model: 'llama-3.1-8b-instant',
+                model: 'openai/gpt-oss-120b:free',
                 messages: messages,
                 temperature: 0.7,
                 max_tokens: 1000
@@ -352,7 +354,8 @@ INTELLIGENCE INDICATORS:
         });
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errBody = await response.json().catch(() => ({}));
+            throw new Error(`HTTP ${response.status}: ${errBody?.error?.message || 'Unknown error'}`);
         }
         
         const data = await response.json();
