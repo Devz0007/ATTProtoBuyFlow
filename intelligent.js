@@ -1,8 +1,5 @@
 class IntelligentCart {
     constructor() {
-        this.openRouterApiKey = null;
-        this.openRouterEndpoint = null;
-        this.envLoader = new EnvLoader();
         
         this.conversationHistory = [];
         this.userProfile = {
@@ -91,23 +88,8 @@ class IntelligentCart {
     }
     
     async init() {
-        try {
-            // Load environment variables
-            await this.envLoader.loadEnv();
-            this.openRouterApiKey = this.envLoader.getRequired('OPENROUTER_API_KEY');
-            this.openRouterEndpoint = this.envLoader.get('OPENROUTER_ENDPOINT', 'https://openrouter.ai/api/v1/chat/completions');
-            
-            this.bindEvents();
-            this.setupSystemPrompt();
-            
-            console.log('✅ Intelligent Cart initialized successfully with API key');
-        } catch (error) {
-            console.error('❌ Failed to initialize Intelligent Cart:', error.message);
-            this.addMessageToChat(
-                "⚠️ Unable to load API configuration. Please make sure the local.env file exists with your OPENROUTER_API_KEY. Check the console for details.", 
-                'ai'
-            );
-        }
+        this.bindEvents();
+        this.setupSystemPrompt();
     }
     
     bindEvents() {
@@ -324,27 +306,16 @@ INTELLIGENCE INDICATORS:
     }
     
     async getAIResponse(userMessage) {
-        // Check if API key is loaded
-        if (!this.openRouterApiKey) {
-            throw new Error('API key not loaded. Please check your local.env file.');
-        }
-        
-        // Build context-aware system prompt
         const contextualPrompt = this.buildContextualPrompt();
         
         const messages = [
             { role: 'system', content: contextualPrompt },
-            ...this.conversationHistory.slice(-8) // Keep last 8 messages for context
+            ...this.conversationHistory.slice(-8)
         ];
         
-        const response = await fetch(this.openRouterEndpoint, {
+        const response = await fetch('/api/chat', {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${this.openRouterApiKey}`,
-                'Content-Type': 'application/json',
-                'HTTP-Referer': window.location.origin,
-                'X-Title': 'AT&T Prototype Buy Flow'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 model: 'openai/gpt-oss-120b:free',
                 messages: messages,
